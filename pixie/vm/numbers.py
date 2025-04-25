@@ -21,7 +21,11 @@ class Integer(Number):
         self._int_val = i_val
 
     def int_val(self):
-        return self._int_val
+        #return self._int_val
+
+        from rpython.rtyper.lltypesystem import lltype
+        val = self._int_val
+        return lltype.cast_primitive(lltype.Signed, val)
 
     def r_uint_val(self):
         return r_uint(self._int_val)

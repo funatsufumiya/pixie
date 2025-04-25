@@ -238,15 +238,39 @@ def entry_point(args):
 def add_to_load_paths(path):
     rt.reset_BANG_(LOAD_PATHS.deref(), rt.conj(rt.deref(LOAD_PATHS.deref()), rt.wrap(path)))
 
-
 def init_load_path(self_path):
+    import os
+    import os.path
+    import sys
     if not path.isfile(self_path):
         self_path = find_in_path(self_path)
         assert self_path is not None
     if path.islink(self_path):
-        self_path = os.readlink(self_path)
+        # プラットフォーム特有のコードを分離
+        from rpython.rlib.objectmodel import we_are_translated
+        if not we_are_translated() and sys.platform != "win32":
+            # 翻訳時ではなく実行時のみ評価される
+            if os.path.islink(self_path):
+                try:
+                    self_path = os.readlink(self_path)
+                except AttributeError:
+                    pass  # Windowsの場合は何もしない
+        else:
+            # RPython翻訳時に安全なコードパス
+            if sys.platform != "win32":
+                # Unixプラットフォームでのみインポート
+                try:
+                    import rpython.rlib.rposix as rposix
+                    if os.path.islink(self_path):
+                        self_path = rposix.readlink(self_path)
+                except (ImportError, AttributeError):
+                    # readlinkが利用できない場合
+                    pass
+        
+        # 共通コードパス
+        self_path = os.path.abspath(os.path.dirname(self_path))
+    
     self_path = dirname(rpath.rabspath(self_path))
-
     # runtime is not loaded yet, so we have to do it manually
     LOAD_PATHS.set_root(Atom(EMPTY_VECTOR.conj(rt.wrap(self_path))))
     # just for run_load_stdlib (global variables can't be assigned to)

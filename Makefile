@@ -6,7 +6,7 @@ PYTHON ?= `env which -a python2 python2.7 | head -n1`
 PYTHONPATH=$$PYTHONPATH:$(EXTERNALS)/pypy
 
 
-COMMON_BUILD_OPTS?=--thread --gcrootfinder=shadowstack --continuation
+COMMON_BUILD_OPTS?=--cc=gcc --thread --gcrootfinder=shadowstack
 JIT_OPTS?=--opt=jit
 TARGET_OPTS?=target.py
 
@@ -19,17 +19,17 @@ help:
 	@echo "make fetch_externals	   - download and unpack external deps"
 
 build_with_jit: fetch_externals
-	@if [ ! -d /usr/local/include/boost -a ! -d /usr/include/boost ] ; then echo "Boost C++ Library not found" && false; fi && \
+	@if [ ! -d /usr/local/include/boost -a ! -d /usr/include/boost -a ! -d /ucrt64/include/boost ] ; then echo "Boost C++ Library not found" && false; fi && \
 	rpython $(COMMON_BUILD_OPTS) --opt=jit target.py && \
 	make compile_basics
 
 build_no_jit: fetch_externals
-	@if [ ! -d /usr/local/include/boost -a ! -d /usr/include/boost ] ; then echo "Boost C++ Library not found" && false; fi && \
+	@if [ ! -d /usr/local/include/boost -a ! -d /usr/include/boost -a ! -d /ucrt64/include/boost ] ; then echo "Boost C++ Library not found" && false; fi && \
 	rpython $(COMMON_BUILD_OPTS) target.py && \
 	make compile_basics
 
 build_no_jit_shared: fetch_externals
-	@if [ ! -d /usr/local/include/boost -a ! -d /usr/include/boost ] ; then echo "Boost C++ Library not found" && false; fi && \
+	@if [ ! -d /usr/local/include/boost -a ! -d /usr/include/boost -a ! -d /ucrt64/include/boost ] ; then echo "Boost C++ Library not found" && false; fi && \
 	rpython $(COMMON_BUILD_OPTS) --shared target.py && \
 	make compile_basics
 
@@ -44,9 +44,9 @@ build: fetch_externals
 fetch_externals: $(EXTERNALS)/pypy externals.fetched
 
 externals.fetched:
-	echo https://github.com/pixie-lang/external-deps/releases/download/1.0/`uname -s`-`uname -m`.tar.bz2
-	curl -L https://github.com/pixie-lang/external-deps/releases/download/1.0/`uname -s`-`uname -m`.tar.bz2 > /tmp/externals.tar.bz2
-	tar -jxf /tmp/externals.tar.bz2 --strip-components=2
+	#echo https://github.com/pixie-lang/external-deps/releases/download/1.0/`uname -s`-`uname -m`.tar.bz2
+	#curl -L https://github.com/pixie-lang/external-deps/releases/download/1.0/`uname -s`-`uname -m`.tar.bz2 > /tmp/externals.tar.bz2
+	#tar -jxf /tmp/externals.tar.bz2 --strip-components=2
 	touch externals.fetched
 
 

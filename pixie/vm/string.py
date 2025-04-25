@@ -5,7 +5,7 @@ from pixie.vm.primitives import nil, true, false
 from pixie.vm.numbers import Integer, _add
 import pixie.vm.stdlib as proto
 import pixie.vm.util as util
-from rpython.rlib.rarithmetic import intmask, r_uint
+from rpython.rlib.rarithmetic import intmask, r_uint, r_int, r_int32
 from pixie.vm.libs.pxic.util import add_marshall_handlers
 
 class String(Object):
@@ -73,12 +73,20 @@ class Character(Object):
     _type = Type(u"pixie.stdlib.Character")
     _immutable_fields_ = ["_char_val"]
 
+    # def __init__(self, i):
+    #     #assert isinstance(i, r_int32)
+    #     self._char_val = i
+
     def __init__(self, i):
-        assert isinstance(i, int)
-        self._char_val = i
+        #assert isinstance(i, r_int32)
+        from rpython.rtyper.lltypesystem import rffi
+        self._char_val = rffi.cast(rffi.INT, i)
 
     def char_val(self):
-        return self._char_val
+        #return self._char_val
+
+        from rpython.rtyper.lltypesystem import lltype
+        return lltype.cast_primitive(lltype.Signed, self._char_val)
 
 @wrap_fn
 def write_char(obj):
