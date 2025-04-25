@@ -20,17 +20,20 @@ help:
 
 build_with_jit: fetch_externals
 	@if [ ! -d /usr/local/include/boost -a ! -d /usr/include/boost ] ; then echo "Boost C++ Library not found" && false; fi && \
-	$(PYTHON) $(EXTERNALS)/pypy/rpython/bin/rpython $(COMMON_BUILD_OPTS) --opt=jit target.py && \
+	#$(PYTHON) $(EXTERNALS)/pypy/rpython/bin/rpython $(COMMON_BUILD_OPTS) --opt=jit target.py && \
+	rpython $(COMMON_BUILD_OPTS) --opt=jit target.py && \
 	make compile_basics
 
 build_no_jit: fetch_externals
 	@if [ ! -d /usr/local/include/boost -a ! -d /usr/include/boost ] ; then echo "Boost C++ Library not found" && false; fi && \
-	$(PYTHON) $(EXTERNALS)/pypy/rpython/bin/rpython $(COMMON_BUILD_OPTS) target.py && \
+	#$(PYTHON) $(EXTERNALS)/pypy/rpython/bin/rpython $(COMMON_BUILD_OPTS) target.py && \
+	rpython $(COMMON_BUILD_OPTS) target.py && \
 	make compile_basics
 
 build_no_jit_shared: fetch_externals
 	@if [ ! -d /usr/local/include/boost -a ! -d /usr/include/boost ] ; then echo "Boost C++ Library not found" && false; fi && \
-	$(PYTHON) $(EXTERNALS)/pypy/rpython/bin/rpython $(COMMON_BUILD_OPTS) --shared target.py && \
+	#$(PYTHON) $(EXTERNALS)/pypy/rpython/bin/rpython $(COMMON_BUILD_OPTS) --shared target.py && \
+	rpython $(COMMON_BUILD_OPTS) --shared target.py && \
 	make compile_basics
 
 
@@ -39,7 +42,8 @@ compile_basics:
 	./pixie-vm -c pixie/uv.pxi -c pixie/io.pxi -c pixie/stacklets.pxi -c pixie/stdlib.pxi -c pixie/repl.pxi
 
 build: fetch_externals
-	$(PYTHON) $(EXTERNALS)/pypy/rpython/bin/rpython $(COMMON_BUILD_OPTS) $(JIT_OPTS) $(TARGET_OPTS)
+	#$(PYTHON) $(EXTERNALS)/pypy/rpython/bin/rpython $(COMMON_BUILD_OPTS) $(JIT_OPTS) $(TARGET_OPTS)
+	rpython $(COMMON_BUILD_OPTS) $(JIT_OPTS) $(TARGET_OPTS)
 
 fetch_externals: $(EXTERNALS)/pypy externals.fetched
 
@@ -53,10 +57,10 @@ externals.fetched:
 $(EXTERNALS)/pypy:
 	mkdir $(EXTERNALS); \
 	cd $(EXTERNALS); \
-	curl https://bitbucket.org/pypy/pypy/get/91db1a9.tar.bz2 >  pypy.tar.bz2; \
+	curl -L https://github.com/pypy/pypy/archive/refs/tags/release-pypy3.11-v7.3.19.tar.gz > pypy.tar.gz; \
 	mkdir pypy; \
 	cd pypy; \
-	tar -jxf ../pypy.tar.bz2 --strip-components=1
+	tar -xf ../pypy.tar.gz --strip-components=1
 
 run:
 	./pixie-vm
