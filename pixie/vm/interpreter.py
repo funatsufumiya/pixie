@@ -19,16 +19,16 @@ def get_inst_by_idx(bc, idx):
     return bc[idx]
 
 class Frame(object):
-    _virtualizable_ = ["stack[*]",
+    _virtualizable_ = ["stack",
                        "sp",
                        "ip",
                        "bc",
-                       "consts[*]",
+                       "consts",
                        "code_obj",
                        "debug_points",
-                       "args[*]",
+                       "args",
                        "base_code",
-                       "closed_overs[*]",
+                       "closed_overs",
                        "finished",
                        "_is_continuation",
                        "self_obj"

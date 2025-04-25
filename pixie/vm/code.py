@@ -146,7 +146,7 @@ def join_last(words, sep):
 class MultiArityFn(BaseCode):
     _type = object.Type(u"pixie.stdlib.MultiArityFn")
 
-    _immutable_fields_ = ["_arities[*]", "_required_arity", "_rest_fn"]
+    _immutable_fields_ = ["_arities", "_required_arity", "_rest_fn"]
 
     def __init__(self, name, arities, required_arity=0, rest_fn=None, meta=nil):
         BaseCode.__init__(self)
@@ -209,7 +209,7 @@ class NativeFn(BaseCode):
 class Code(BaseCode):
     """Interpreted code block. Contains consts and """
     _type = object.Type(u"pixie.stdlib.Code")
-    _immutable_fields_ = ["_arity", "_consts[*]", "_bytecode", "_stack_size", "_meta", "_debug_points"]
+    _immutable_fields_ = ["_arity", "_consts", "_bytecode", "_stack_size", "_meta", "_debug_points"]
 
     def __init__(self, name, arity, bytecode, consts, stack_size, debug_points, meta=nil):
         BaseCode.__init__(self)
@@ -305,7 +305,7 @@ class VariadicCode(BaseCode):
 
 class Closure(BaseCode):
     _type = object.Type(u"pixie.stdlib.Closure")
-    _immutable_fields_ = ["_closed_overs[*]", "_code", "_meta"]
+    _immutable_fields_ = ["_closed_overs", "_code", "_meta"]
     
     def __init__(self, code, closed_overs, meta=nil):
         BaseCode.__init__(self)

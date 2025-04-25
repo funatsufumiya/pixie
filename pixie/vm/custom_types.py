@@ -8,7 +8,7 @@ import pixie.vm.rt as rt
 MAX_FIELDS = 32
 
 class CustomType(Type):
-    _immutable_fields_ = ["_slots[*]", "_rev?"]
+    _immutable_fields_ = ["_slots", "_rev?"]
     def __init__(self, name, slots):
         Type.__init__(self, name)
 
